@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Scene Key Request</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    body {
+        font-family: system-ui, sans-serif;
+        padding: 40px;
+        background: #fafafa;
+        text-align: center;
+        color: #333;
+    }
+    h2 {
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+    button {
+        padding: 14px 28px;
+        font-size: 17px;
+        background: #288cff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.15s ease;
+    }
+    button:hover {
+        background: #1f73d4;
+    }
+</style>
+</head>
+<body>
+
+<h2>Send Scene Key Request</h2>
+<p>Tap below to open your email app.</p>
+
+<a id="mailLink">
+    <button>Open Email</button>
+</a>
+
+<script>
+    const mailto = "mailto:1191634433@qq.com"
+        + "?subject=Scene%20Key"
+        + "&body="
+        + encodeURIComponent(
+`Description -
+Transaction ID - (put yours)
+Date and time - (put yours)
+Amount - 4.5$
+
+(Attach PDF or image containing the above details or you'll be ignored)
+
+Send a mail every 24 hours until reply.`
+        );
+
+    document.getElementById("mailLink").href = mailto;
+</script>
+
+</body>
+</html>
