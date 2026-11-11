@@ -5,57 +5,189 @@
 <title>Scene Key Request</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+    * {
+        box-sizing: border-box;
+    }
     body {
-        font-family: system-ui, sans-serif;
-        padding: 40px;
-        background: #fafafa;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        padding: 30px 20px;
+        background: #f4f6f8;
+        color: #202124;
         text-align: center;
-        color: #333;
+        margin: 0;
+    }
+    .card {
+        background: #ffffff;
+        max-width: 440px;
+        margin: 0 auto;
+        padding: 28px 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    .icon {
+        font-size: 46px;
+        margin-bottom: 8px;
     }
     h2 {
-        margin-bottom: 20px;
-        font-weight: 600;
+        margin: 0 0 10px;
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a73e8;
     }
-    button {
-        padding: 14px 28px;
-        font-size: 17px;
-        background: #288cff;
-        color: white;
-        border: none;
+    p {
+        margin: 0 0 20px;
+        font-size: 14px;
+        color: #5f6368;
+        line-height: 1.5;
+    }
+    .btn {
+        display: block;
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
         border-radius: 10px;
         cursor: pointer;
-        transition: 0.15s ease;
+        margin-bottom: 12px;
+        transition: all 0.2s ease;
+        border: none;
     }
-    button:hover {
-        background: #1f73d4;
+    .btn-gmail {
+        background: #ea4335;
+        color: white;
+    }
+    .btn-gmail:hover {
+        background: #d33828;
+    }
+    .btn-secondary {
+        background: #e8f0fe;
+        color: #1a73e8;
+    }
+    .btn-secondary:hover {
+        background: #d2e3fc;
+    }
+    .btn-copy {
+        background: #f1f3f4;
+        color: #3c4043;
+        font-size: 14px;
+        padding: 10px;
+    }
+    .btn-copy:hover {
+        background: #e0e2e5;
+    }
+    .notice {
+        margin-top: 16px;
+        font-size: 12px;
+        color: #80868b;
+    }
+    .status {
+        display: inline-block;
+        background: #e6f4ea;
+        color: #137333;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 16px;
     }
 </style>
 </head>
 <body>
 
-<h2>Send Scene Key Request</h2>
-<p>Tap below to open your email app.</p>
+<div class="card">
+    <div class="icon">✉️</div>
+    <h2>Scene Key Request</h2>
+    <div id="status" class="status">⚡ Opening Gmail...</div>
+    <p>Opening Gmail with the pre-filled template. If it did not open automatically, tap below:</p>
 
-<a id="mailLink">
-    <button>Open Email</button>
-</a>
+    <!-- Direct Gmail App Button -->
+    <button class="btn btn-gmail" id="gmailBtn" onclick="openGmail()">
+        🚀 Open in Gmail App
+    </button>
+
+    <!-- Gmail Web fallback for desktop/browser -->
+    <a id="gmailWebLink" target="_blank" rel="noopener noreferrer">
+        <button class="btn btn-secondary">🌐 Open in Gmail Web</button>
+    </a>
+
+    <!-- 1-Tap Copy Template -->
+    <button class="btn btn-copy" id="copyBtn" onclick="copyTemplate()">
+        📋 Copy Email & Template
+    </button>
+
+    <div class="notice">
+        To: <b>1191634433@qq.com</b><br>
+        <i>Attach screenshot or PDF of PayPal payment receipt!</i>
+    </div>
+</div>
 
 <script>
-    const mailto = "mailto:1191634433@qq.com"
-        + "?subject=Scene%20Key"
-        + "&body="
-        + encodeURIComponent(
-`Description -
+    const recipient = "1191634433@qq.com";
+    const subject = "Scene Key";
+    const body = `Description -
 Transaction ID - (put yours)
 Date and time - (put yours)
 Amount - 4.5$
 
 (Attach PDF or image containing the above details or you'll be ignored)
 
-Send a mail every 24 hours until reply.`
-        );
+Send a mail every 24 hours until reply.`;
 
-    document.getElementById("mailLink").href = mailto;
+    const encodedSubject = encodeURIComponent(subject);
+    const encodedBody = encodeURIComponent(body);
+
+    const mailtoUrl = `mailto:${recipient}?subject=${encodedSubject}&body=${encodedBody}`;
+    const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${encodedSubject}&body=${encodedBody}`;
+    
+    // Explicit Android Intent targeting the Gmail application package
+    const androidGmailIntent = `intent:#Intent;action=android.intent.action.SENDTO;data=mailto:${recipient}?subject=${encodedSubject}&body=${encodedBody};package=com.google.android.gm;end`;
+
+    // iOS Gmail app URI scheme
+    const iosGmailUrl = `googlegmail:///co?to=${recipient}&subject=${encodedSubject}&body=${encodedBody}`;
+
+    document.getElementById("gmailWebLink").href = gmailWebUrl;
+
+    function openGmail() {
+        const ua = navigator.userAgent || "";
+        const isAndroid = /android/i.test(ua);
+        const isIOS = /iphone|ipad|ipod/i.test(ua);
+
+        if (isAndroid) {
+            // Launch Android Gmail app directly; fallback to mailto if uninstalled
+            window.location.href = androidGmailIntent;
+            setTimeout(() => {
+                window.location.href = mailtoUrl;
+            }, 600);
+        } else if (isIOS) {
+            // Launch iOS Gmail app; fallback to mailto if uninstalled
+            window.location.href = iosGmailUrl;
+            setTimeout(() => {
+                window.location.href = mailtoUrl;
+            }, 600);
+        } else {
+            // Desktop: Open Gmail web compose window
+            window.location.href = gmailWebUrl;
+        }
+    }
+
+    // Auto-open Gmail immediately when the page loads
+    window.addEventListener("DOMContentLoaded", () => {
+        setTimeout(openGmail, 150);
+    });
+
+    function copyTemplate() {
+        const fullText = `To: ${recipient}\nSubject: ${subject}\n\n${body}`;
+        navigator.clipboard.writeText(fullText).then(() => {
+            const btn = document.getElementById("copyBtn");
+            btn.innerText = "✅ Copied to clipboard!";
+            setTimeout(() => {
+                btn.innerText = "📋 Copy Email & Template";
+            }, 3000);
+        }).catch(() => {
+            alert("Recipient: " + recipient);
+        });
+    }
 </script>
 
 </body>
